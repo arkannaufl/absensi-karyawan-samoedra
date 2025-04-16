@@ -75,8 +75,8 @@
                                     @elseif(str_contains(strtolower($notification->title), 'check out') ||
                                     str_contains(strtolower($notification->message), 'check out'))
                                     <div
-                                        class="h-10 w-10 sm:h-12 sm:w-12 rounded-xl bg-purple-50 flex items-center justify-center group-hover:scale-110 transition-transform">
-                                        <i class="fas fa-sign-out-alt text-lg sm:text-xl text-purple-500"></i>
+                                        class="h-10 w-10 sm:h-12 sm:w-12 rounded-xl bg-red-50 flex items-center justify-center group-hover:scale-110 transition-transform">
+                                        <i class="fas fa-sign-out-alt text-lg sm:text-xl text-red-500"></i>
                                     </div>
                                     @else
                                     @switch($notification->type)

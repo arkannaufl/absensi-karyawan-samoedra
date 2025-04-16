@@ -81,7 +81,7 @@
                                 <i class="fas fa-user-group text-xl md:text-2xl"></i>
                             </div>
                             <div>
-                                <p class="text-base font-medium text-gray-500">Total Karyawan</p>
+                                <p class="text-gray-500">Total Karyawan</p>
                                 <p class="text-2xl font-semibold text-gray-800">{{ $totalKaryawan }}</p>
                             </div>
                         </div>
@@ -98,7 +98,7 @@
                                 <i class="fas fa-user-check text-xl md:text-2xl"></i>
                             </div>
                             <div>
-                                <p class="text-base font-medium text-gray-500">Total Karyawan Hadir</p>
+                                <p class="text-gray-500">Total Karyawan Hadir</p>
                                 <p class="text-2xl font-semibold text-gray-800">{{ $totalAbsensi }}</p>
                             </div>
                         </div>
@@ -115,7 +115,7 @@
                                 <i class="fas fa-calendar-day text-xl md:text-2xl"></i>
                             </div>
                             <div>
-                                <p class="text-base font-medium text-gray-500">Karyawan Hadir Hari Ini</p>
+                                <p class="text-gray-500">Karyawan Hadir Hari Ini</p>
                                 <p class="text-2xl font-semibold text-gray-800">{{ $absensiHariIni }}</p>
                             </div>
                         </div>
@@ -132,7 +132,7 @@
                                 <i class="fas fa-calendar-alt text-xl md:text-2xl"></i>
                             </div>
                             <div>
-                                <p class="text-base font-medium text-gray-500">Karyawan Hadir Bulan Ini</p>
+                                <p class="text-gray-500">Karyawan Hadir Bulan Ini</p>
                                 <p class="text-2xl font-semibold text-gray-800">{{ $absensiBulanIni }}</p>
                             </div>
                         </div>
@@ -248,37 +248,24 @@
                 </div>
                 <div class="overflow-x-auto table-container">
                     <table class="min-w-full divide-y divide-gray-200">
-                        <!-- Replace the existing table header -->
                         <thead class="bg-gray-50">
                             <tr>
-                                <th scope="col"
-                                    class="px-8 py-3 text-left text-sm font-medium text-gray-500 uppercase tracking-wider">
+                                <th scope="col" class="px-8 py-3 text-left text-sm font-medium text-gray-500 uppercase tracking-wider">
                                     Nama</th>
-                                <th scope="col"
-                                    class="px-8 py-3 text-left text-sm font-medium text-gray-500 uppercase tracking-wider">
-                                    Hadir Untuk</th>
-                                <th scope="col"
-                                    class="px-8 py-3 text-left text-sm font-medium text-gray-500 uppercase tracking-wider">
+                                <th scope="col" class="px-8 py-3 text-left text-sm font-medium text-gray-500 uppercase tracking-wider">
                                     Lokasi</th>
-                                <th scope="col"
-                                    class="px-8 py-3 text-left text-sm font-medium text-gray-500 uppercase tracking-wider">
+                                <th scope="col" class="px-8 py-3 text-left text-sm font-medium text-gray-500 uppercase tracking-wider">
                                     Tanggal</th>
-                                <th scope="col"
-                                    class="px-8 py-3 text-left text-sm font-medium text-gray-500 uppercase tracking-wider">
+                                <th scope="col" class="px-8 py-3 text-left text-sm font-medium text-gray-500 uppercase tracking-wider">
                                     Jam Masuk</th>
-                                <th scope="col"
-                                    class="px-8 py-3 text-left text-sm font-medium text-gray-500 uppercase tracking-wider">
+                                <th scope="col" class="px-8 py-3 text-left text-sm font-medium text-gray-500 uppercase tracking-wider">
                                     Jam Keluar</th>
-                                <th scope="col"
-                                    class="px-8 py-3 text-left text-sm font-medium text-gray-500 uppercase tracking-wider">
+                                <th scope="col" class="px-8 py-3 text-left text-sm font-medium text-gray-500 uppercase tracking-wider">
                                     Durasi</th>
-                                <th scope="col"
-                                    class="px-8 py-3 text-right text-sm font-medium text-gray-500 uppercase tracking-wider">
+                                <th scope="col" class="px-8 py-3 text-right text-sm font-medium text-gray-500 uppercase tracking-wider">
                                     Aksi</th>
                             </tr>
                         </thead>
-
-                        <!-- Replace the existing table body -->
                         <tbody id="attendanceTableBody" class="bg-white divide-y divide-gray-200">
                             @forelse($attendances as $attendance)
                             <tr class="hover:bg-gray-50 transition-colors duration-150">
@@ -290,57 +277,49 @@
                                                 src="{{ asset('storage/' . $attendance->foto) }}" alt="Foto">
                                         </div>
                                         @else
-                                        <div
-                                            class="flex-shrink-0 h-10 w-10 rounded-full bg-gray-200 flex items-center justify-center text-gray-400">
+                                        <div class="flex-shrink-0 h-10 w-10 rounded-full bg-gray-200 flex items-center justify-center text-gray-400">
                                             <i class="fas fa-user"></i>
                                         </div>
                                         @endif
                                         <div class="ml-4">
-                                            <div class="text-base font-medium text-gray-900">{{ $attendance->nama }}
-                                            </div>
+                                            <div class="text-base font-medium text-gray-900">{{ $attendance->nama }}</div>
+                                            <div class="text-sm text-gray-500">{{ $attendance->hadir_untuk }}</div>
                                         </div>
                                     </div>
-                                </td>
-                                <td class="px-8 py-4 whitespace-nowrap">
-                                    <div class="text-base text-gray-500">{{ $attendance->hadir_untuk }}</div>
                                 </td>
                                 <td class="px-8 py-4 whitespace-nowrap">
                                     <div class="text-base text-gray-500">{{ $attendance->lokasi }}</div>
                                 </td>
                                 <td class="px-8 py-4 whitespace-nowrap">
-                                    <div class="text-base text-gray-500">{{ $attendance->tanggal }}</div>
+                                    <div class="text-base text-gray-500">{{ date('Y-m-d', strtotime($attendance->tanggal)) }}</div>
                                 </td>
                                 <td class="px-8 py-4 whitespace-nowrap">
-                                    <div class="text-base text-gray-500">{{ $attendance->check_in ?? '-' }}</div>
+                                    <div class="text-base text-gray-500">{{ $attendance->check_in ? date('H:i:s', strtotime($attendance->check_in)) : '-' }}</div>
                                 </td>
                                 <td class="px-8 py-4 whitespace-nowrap">
-                                    <div class="text-base text-gray-500">{{ $attendance->check_out ?? '-' }}</div>
+                                    <div class="text-base text-gray-500">{{ $attendance->check_out ? date('H:i:s', strtotime($attendance->check_out)) : '-' }}</div>
                                 </td>
                                 <td class="px-8 py-4 whitespace-nowrap">
                                     <div class="text-base text-gray-500">
                                         @if($attendance->check_out)
-                                        {{ floor($attendance->work_hours / 60) }} jam {{ $attendance->work_hours % 60 }}
-                                        menit
+                                            {{ floor($attendance->work_hours / 60) }} jam {{ $attendance->work_hours % 60 }} menit
                                         @else
-                                        Masih bekerja
+                                            Masih bekerja
                                         @endif
                                     </div>
                                 </td>
                                 <td class="px-8 py-4 whitespace-nowrap text-right text-base font-medium">
-                                    <button data-id="{{ $attendance->id }}"
-                                        class="detail-btn text-purple-600 hover:text-purple-900 mr-3">
+                                    <button data-id="{{ $attendance->id }}" class="detail-btn text-purple-600 hover:text-purple-900 mr-3">
                                         <i class="fas fa-eye"></i>
                                     </button>
-                                    <button data-id="{{ $attendance->id }}" data-nama="{{ $attendance->nama }}"
-                                        class="delete-attendance-btn text-red-600 hover:text-red-900">
+                                    <button data-id="{{ $attendance->id }}" data-nama="{{ $attendance->nama }}" class="delete-attendance-btn text-red-600 hover:text-red-900">
                                         <i class="fas fa-trash"></i>
                                     </button>
                                 </td>
                             </tr>
                             @empty
                             <tr>
-                                <td colspan="8" class="px-8 py-4 text-center text-base text-gray-500">Belum ada data
-                                    presensi</td>
+                                <td colspan="7" class="px-8 py-4 text-center text-base text-gray-500">Belum ada data presensi</td>
                             </tr>
                             @endforelse
                         </tbody>
@@ -539,50 +518,30 @@
             detailButtons.forEach(button => {
                 button.addEventListener('click', async () => {
                     try {
-                        const response = await fetch(`/admin/attendance/${button.dataset.id}`);
-                        if (!response.ok) throw new Error('Failed to load data');
+                        const response = await fetch(`/admin/attendance/${button.dataset.id}`, {
+                            headers: {
+                                'Accept': 'application/json'
+                            }
+                        });
+                        if (!response.ok) throw new Error('Gagal memuat data');
                         const data = await response.json();
 
                         // Safely set image sources
-                        const setImageSafe = (elementId, imageUrl, defaultUrl = '/images/default-user.jpg') => {
-                            const element = document.getElementById(elementId);
-                            if (element) {
-                                element.src = imageUrl || defaultUrl;
-                                element.onerror = () => { element.src = defaultUrl; };
-                            }
-                        };
-
-                        // Update images
                         setImageSafe('detailFotoCheckIn', data.foto);
-                        if (data.foto_checkout) {
+                        if (data.check_out) {
                             document.getElementById('checkoutInfo').classList.remove('hidden');
                             setImageSafe('detailFotoCheckOut', data.foto_checkout);
                         } else {
                             document.getElementById('checkoutInfo').classList.add('hidden');
                         }
 
-                        // Update text content safely
-                        const setTextSafe = (elementId, text) => {
-                            const element = document.getElementById(elementId);
-                            if (element) element.textContent = text || '-';
-                        };
-
-                        // Update all text fields
+                        // Safely set text content
                         setTextSafe('detailNama', data.nama);
                         setTextSafe('detailHadirUntuk', data.hadir_untuk);
                         setTextSafe('detailLokasi', data.lokasi);
                         setTextSafe('detailTanggal', data.tanggal);
                         setTextSafe('detailCheckInTime', data.check_in);
                         setTextSafe('detailCheckOutTime', data.check_out);
-                        
-                        // Format work hours
-                        if (data.work_hours) {
-                            const hours = Math.floor(data.work_hours / 60);
-                            const minutes = data.work_hours % 60;
-                            setTextSafe('detailWorkHours', `${hours} jam ${minutes} menit`);
-                        } else {
-                            setTextSafe('detailWorkHours', '-');
-                        }
 
                         // Update status
                         const statusElement = document.getElementById('detailCheckInStatus');
@@ -593,16 +552,26 @@
                                 'text-base font-medium text-blue-600';
                         }
 
-                        // Early leave reason
-                        if (data.early_leave_reason) {
-                            document.getElementById('earlyLeaveInfo').classList.remove('hidden');
-                            setTextSafe('detailEarlyLeaveReason', data.early_leave_reason);
-                        } else {
-                            document.getElementById('earlyLeaveInfo').classList.add('hidden');
+                        // Handle work hours
+                        if (data.check_out) {
+                            const hours = Math.floor(data.work_hours / 60);
+                            const minutes = data.work_hours % 60;
+                            setTextSafe('detailWorkHours', `${hours} jam ${minutes} menit`);
                         }
 
-                        // Attendance percentage
-                        setTextSafe('detailAttendancePercentage', data.attendance_percentage ? `${data.attendance_percentage}%` : '0%');
+                        // Handle early leave reason
+                        const earlyLeaveInfo = document.getElementById('earlyLeaveInfo');
+                        if (data.early_leave_reason) {
+                            earlyLeaveInfo.classList.remove('hidden');
+                            setTextSafe('detailEarlyLeaveReason', data.early_leave_reason);
+                        } else {
+                            earlyLeaveInfo.classList.add('hidden');
+                        }
+
+                        // Update attendance percentage
+                        setTextSafe('detailAttendancePercentage', 
+                            data.attendance_percentage ? `${data.attendance_percentage}%` : '0%'
+                        );
 
                         showModal(detailModal, detailModalContent);
                     } catch (error) {
@@ -743,7 +712,6 @@
         const deleteAttendanceButtons = document.querySelectorAll('.delete-attendance-btn');
         const cancelDeleteAttendanceBtn = document.getElementById('cancelDeleteAttendanceBtn');
         const deleteAttendanceForm = document.getElementById('deleteAttendanceForm');
-
 
         if (deleteAttendanceButtons) {
             deleteAttendanceButtons.forEach(button => {
@@ -1120,11 +1088,9 @@
                         }
                         <div class="ml-4">
                             <div class="text-base font-medium text-gray-900">${attendance.nama}</div>
+                            <div class="text-sm text-gray-500">${attendance.hadir_untuk}</div>
                         </div>
                     </div>
-                </td>
-                <td class="px-8 py-4 whitespace-nowrap">
-                    <div class="text-base text-gray-500">${attendance.hadir_untuk}</div>
                 </td>
                 <td class="px-8 py-4 whitespace-nowrap">
                     <div class="text-base text-gray-500">${attendance.lokasi}</div>
@@ -1158,7 +1124,7 @@
             } else {
                 tbody.innerHTML = `
             <tr>
-                <td colspan="8" class="px-8 py-4 text-center text-base text-gray-500">Tidak ditemukan data presensi</td>
+                <td colspan="7" class="px-8 py-4 text-center text-base text-gray-500">Tidak ditemukan data presensi</td>
             </tr>
         `;
             }
@@ -1201,30 +1167,15 @@
                         const data = await response.json();
 
                         // Safely set image sources
-                        const setImageSafe = (elementId, imageUrl, defaultUrl = '/images/default-user.jpg') => {
-                            const element = document.getElementById(elementId);
-                            if (element) {
-                                element.src = imageUrl || defaultUrl;
-                                element.onerror = () => { element.src = defaultUrl; };
-                            }
-                        };
-
-                        // Update images
                         setImageSafe('detailFotoCheckIn', data.foto);
-                        if (data.foto_checkout) {
+                        if (data.check_out) {
                             document.getElementById('checkoutInfo').classList.remove('hidden');
                             setImageSafe('detailFotoCheckOut', data.foto_checkout);
                         } else {
                             document.getElementById('checkoutInfo').classList.add('hidden');
                         }
 
-                        // Update text content safely
-                        const setTextSafe = (elementId, text) => {
-                            const element = document.getElementById(elementId);
-                            if (element) element.textContent = text || '-';
-                        };
-
-                        // Update all text fields
+                        // Safely set text content
                         setTextSafe('detailNama', data.nama);
                         setTextSafe('detailHadirUntuk', data.hadir_untuk);
                         setTextSafe('detailLokasi', data.lokasi);
@@ -1232,15 +1183,6 @@
                         setTextSafe('detailCheckInTime', data.check_in);
                         setTextSafe('detailCheckOutTime', data.check_out);
                         
-                        // Format work hours
-                        if (data.work_hours) {
-                            const hours = Math.floor(data.work_hours / 60);
-                            const minutes = data.work_hours % 60;
-                            setTextSafe('detailWorkHours', `${hours} jam ${minutes} menit`);
-                        } else {
-                            setTextSafe('detailWorkHours', '-');
-                        }
-
                         // Update status
                         const statusElement = document.getElementById('detailCheckInStatus');
                         if (statusElement) {
@@ -1250,16 +1192,26 @@
                                 'text-base font-medium text-blue-600';
                         }
 
-                        // Early leave reason
-                        if (data.early_leave_reason) {
-                            document.getElementById('earlyLeaveInfo').classList.remove('hidden');
-                            setTextSafe('detailEarlyLeaveReason', data.early_leave_reason);
-                        } else {
-                            document.getElementById('earlyLeaveInfo').classList.add('hidden');
+                        // Handle work hours
+                        if (data.check_out) {
+                            const hours = Math.floor(data.work_hours / 60);
+                            const minutes = data.work_hours % 60;
+                            setTextSafe('detailWorkHours', `${hours} jam ${minutes} menit`);
                         }
 
-                        // Attendance percentage
-                        setTextSafe('detailAttendancePercentage', data.attendance_percentage ? `${data.attendance_percentage}%` : '0%');
+                        // Handle early leave reason
+                        const earlyLeaveInfo = document.getElementById('earlyLeaveInfo');
+                        if (data.early_leave_reason) {
+                            earlyLeaveInfo.classList.remove('hidden');
+                            setTextSafe('detailEarlyLeaveReason', data.early_leave_reason);
+                        } else {
+                            earlyLeaveInfo.classList.add('hidden');
+                        }
+
+                        // Update attendance percentage
+                        setTextSafe('detailAttendancePercentage', 
+                            data.attendance_percentage ? `${data.attendance_percentage}%` : '0%'
+                        );
 
                         showModal(detailModal, detailModalContent);
                     } catch (error) {
@@ -1269,6 +1221,7 @@
                 });
             });
 
+            // Delete attendance buttons
             document.querySelectorAll('.delete-attendance-btn').forEach(button => {
                 button.addEventListener('click', () => {
                     document.getElementById('deleteAttendanceId').value = button.dataset.id;
@@ -1332,5 +1285,27 @@
         setInterval(updateUnreadNotifications, 30000);
     });
 
+    // Safely set image sources with error handling
+    function setImageSafe(elementId, imageUrl, defaultUrl = '/images/default-user.jpg') {
+        const element = document.getElementById(elementId);
+        if (element) {
+            if (imageUrl) {
+                element.src = imageUrl;
+                element.onerror = () => {
+                    element.src = defaultUrl;
+                };
+            } else {
+                element.src = defaultUrl;
+            }
+        }
+    }
+
+    // Safely set text content
+    function setTextSafe(elementId, text, defaultText = '-') {
+        const element = document.getElementById(elementId);
+        if (element) {
+            element.textContent = text || defaultText;
+        }
+    }
 </script>
 @endsection

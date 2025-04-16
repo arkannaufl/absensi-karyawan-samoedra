@@ -28,9 +28,9 @@ class AttendanceController extends Controller
             'nama' => $attendance->nama,
             'lokasi' => $attendance->lokasi,
             'hadir_untuk' => $attendance->hadir_untuk,
-            'tanggal' => $attendance->tanggal,
-            'check_in' => $attendance->check_in,
-            'check_out' => $attendance->check_out,
+            'tanggal' => $attendance->tanggal->format('Y-m-d'),
+            'check_in' => $attendance->check_in ? date('H:i:s', strtotime($attendance->check_in)) : null,
+            'check_out' => $attendance->check_out ? date('H:i:s', strtotime($attendance->check_out)) : null,
             'work_hours' => $attendance->work_hours,
             'early_leave_reason' => $attendance->early_leave_reason,
             'attendance_percentage' => $attendance->attendance_percentage
@@ -134,7 +134,7 @@ class AttendanceController extends Controller
                     'foto' => $fotoPath,
                     'lokasi' => $request->lokasi,
                     'hadir_untuk' => $request->hadir_untuk,
-                    'tanggal' => now()->toDateString(),
+                    'tanggal' => now()->format('Y-m-d'),
                     'check_in' => now()->format('H:i:s'),
                     'work_hours' => 0,
                     'attendance_percentage' => 0

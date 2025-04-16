@@ -26,7 +26,10 @@ class AdminController extends Controller
         
         // Get perPage from request or default to 5
         $perPage = request('per_page', 5);
-        $attendances = Attendance::latest()->paginate($perPage);
+        
+        // Get the attendances and convert them to objects
+        $attendances = Attendance::latest()
+            ->paginate($perPage);
         
         $employees = Employee::all();
     
@@ -214,25 +217,23 @@ class AdminController extends Controller
                 $query->latest();
             }
     
-            $attendances = $query->take(10)
-                ->get()
-                ->map(function ($attendance) {
-                    $duration = $attendance->check_out 
-                        ? floor($attendance->work_hours / 60).' jam '.($attendance->work_hours % 60).' menit'
-                        : 'Masih bekerja';
-                    
-                    return [
-                        'id' => $attendance->id,
-                        'nama' => $attendance->nama,
-                        'hadir_untuk' => $attendance->hadir_untuk,
-                        'lokasi' => $attendance->lokasi,
-                        'tanggal' => $attendance->tanggal,
-                        'check_in' => $attendance->check_in ?? '-',
-                        'check_out' => $attendance->check_out ?? '-',
-                        'duration' => $duration,
-                        'foto' => $attendance->foto,
-                    ];
-                });
+            $attendances = $query->take(10)->get()->map(function ($attendance) {
+                $duration = $attendance->check_out 
+                    ? floor($attendance->work_hours / 60).' jam '.($attendance->work_hours % 60).' menit'
+                    : 'Masih bekerja';
+                
+                return [
+                    'id' => $attendance->id,
+                    'nama' => $attendance->nama,
+                    'hadir_untuk' => $attendance->hadir_untuk,
+                    'lokasi' => $attendance->lokasi,
+                    'tanggal' => $attendance->tanggal ? date('Y-m-d', strtotime($attendance->tanggal)) : '-',
+                    'check_in' => $attendance->check_in ? date('H:i:s', strtotime($attendance->check_in)) : '-',
+                    'check_out' => $attendance->check_out ? date('H:i:s', strtotime($attendance->check_out)) : '-',
+                    'duration' => $duration,
+                    'foto' => $attendance->foto,
+                ];
+            });
     
             Log::info('Search attendances results: ' . $attendances->count() . ' records found');
             return response()->json($attendances);
