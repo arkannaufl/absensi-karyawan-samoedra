@@ -56,7 +56,7 @@ Route::middleware('auth')->group(function () {
     Route::post('logout', [AuthenticatedSessionController::class, 'destroy'])->name('logout');
 });
 
-Route::prefix('account')->group(function () {
+Route::prefix('account')->middleware(['auth'])->group(function () {
     Route::get('/settings', [AccountController::class, 'showSettingsForm'])->name('account.settings');
     Route::post('/update-name', [AccountController::class, 'updateName'])->name('account.update-name');
     Route::post('/update-email', [AccountController::class, 'updateEmail'])->name('account.update-email');

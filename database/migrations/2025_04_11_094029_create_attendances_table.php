@@ -26,6 +26,7 @@ Schema::create('attendances', function (Blueprint $table) {
     $table->string('early_leave_reason')->nullable();
     $table->integer('work_hours')->default(0); // Jam kerja dalam menit
     $table->decimal('attendance_percentage', 5, 2)->default(0); // Persentase kehadiran per hari
+    $table->boolean('auto_checkout')->default(false);
     $table->timestamps();
 });
     }

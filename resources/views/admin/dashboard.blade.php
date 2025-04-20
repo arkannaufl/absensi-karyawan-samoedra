@@ -88,7 +88,7 @@
                     </div>
                 </div>
 
-                <!-- Total Karyawan Hadir -->
+                <!-- Kehadiran Hari Ini -->
                 <div
                     class="bg-white rounded-xl drop-shadow-md overflow-hidden hover:drop-shadow-lg transition-shadow duration-300">
                     <div class="p-6">
@@ -98,31 +98,34 @@
                                 <i class="fas fa-user-check text-xl md:text-2xl"></i>
                             </div>
                             <div>
-                                <p class="text-gray-500">Total Karyawan Hadir</p>
-                                <p class="text-2xl font-semibold text-gray-800">{{ $totalAbsensi }}</p>
+                                <p class="text-gray-500">Kehadiran Hari Ini</p>
+                                <div class="flex items-baseline">
+                                    <p class="text-2xl font-semibold text-gray-800">{{ number_format(abs($dailyPercentage), 1) }}%</p>
+                                    <p class="text-sm text-gray-500 ml-2">({{ $absensiHariIni }} dari {{ $totalKaryawan }})</p>
                             </div>
                         </div>
                     </div>
                 </div>
+                </div>
 
-                <!-- Karyawan Hadir Hari Ini -->
+                <!-- Kehadiran Minggu Ini -->
                 <div
                     class="bg-white rounded-xl drop-shadow-md overflow-hidden hover:drop-shadow-lg transition-shadow duration-300">
                     <div class="p-6">
                         <div class="flex items-center">
                             <div
                                 class="w-14 h-14 md:w-16 md:h-16 aspect-square flex justify-center items-center rounded-full bg-amber-100 text-amber-600 mr-4">
-                                <i class="fas fa-calendar-day text-xl md:text-2xl"></i>
+                                <i class="fas fa-calendar-week text-xl md:text-2xl"></i>
                             </div>
                             <div>
-                                <p class="text-gray-500">Karyawan Hadir Hari Ini</p>
-                                <p class="text-2xl font-semibold text-gray-800">{{ $absensiHariIni }}</p>
+                                <p class="text-gray-500">Rata-rata Kehadiran Minggu Ini</p>
+                                <p class="text-2xl font-semibold text-gray-800">{{ number_format(abs($weeklyPercentage), 1) }}%</p>
                             </div>
                         </div>
                     </div>
                 </div>
 
-                <!-- Karyawan Hadir Bulan Ini -->
+                <!-- Kehadiran Bulan Ini -->
                 <div
                     class="bg-white rounded-xl drop-shadow-md overflow-hidden hover:drop-shadow-lg transition-shadow duration-300">
                     <div class="p-6">
@@ -132,10 +135,123 @@
                                 <i class="fas fa-calendar-alt text-xl md:text-2xl"></i>
                             </div>
                             <div>
-                                <p class="text-gray-500">Karyawan Hadir Bulan Ini</p>
-                                <p class="text-2xl font-semibold text-gray-800">{{ $absensiBulanIni }}</p>
+                                <p class="text-gray-500">Rata-rata Kehadiran Bulan Ini</p>
+                                <p class="text-2xl font-semibold text-gray-800">{{ number_format(abs($monthlyPercentage), 1) }}%</p>
                             </div>
                         </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Attendance Charts -->
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
+                <!-- Weekly Attendance Chart -->
+                <div class="bg-white rounded-xl drop-shadow-md overflow-hidden hover:drop-shadow-xl transition-shadow duration-300">
+                    <div class="p-6">
+                        <div class="flex items-center justify-between mb-6">
+                            <div>
+                                <h3 class="text-xl font-semibold text-gray-800">Statistik Kehadiran Mingguan</h3>
+                                <p class="text-sm text-gray-500 mt-1">{{ now()->startOfWeek()->format('d M') }} - {{ now()->endOfWeek()->format('d M Y') }}</p>
+                            </div>
+                            <div class="bg-amber-50 text-amber-600 px-3 py-1 rounded-lg text-sm font-medium">
+                                {{ number_format(abs($weeklyPercentage), 1) }}% rata-rata
+                            </div>
+                        </div>
+                        <div class="relative h-[300px]">
+                            <canvas id="weeklyChart"></canvas>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Monthly Attendance Chart -->
+                <div class="bg-white rounded-xl drop-shadow-md overflow-hidden hover:drop-shadow-xl transition-shadow duration-300">
+                    <div class="p-6">
+                        <div class="flex items-center justify-between mb-6">
+                            <div>
+                                <h3 class="text-xl font-semibold text-gray-800">Statistik Kehadiran Bulanan</h3>
+                                <p class="text-sm text-gray-500 mt-1">{{ now()->format('F Y') }}</p>
+                            </div>
+                            <div class="bg-purple-50 text-purple-600 px-3 py-1 rounded-lg text-sm font-medium">
+                                {{ number_format(abs($monthlyPercentage), 1) }}% rata-rata
+                            </div>
+                        </div>
+                        <div class="relative h-[300px]">
+                            <canvas id="monthlyChart"></canvas>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Employee Attendance Statistics -->
+            <div class="bg-white rounded-xl drop-shadow-md overflow-hidden hover:drop-shadow-xl transition-shadow duration-300 mb-6">
+                <div class="p-6">
+                    <div class="flex items-center justify-between mb-6">
+                        <div>
+                            <h3 class="text-xl font-semibold text-gray-800">Statistik Kehadiran Per Karyawan</h3>
+                            <p class="text-sm text-gray-500 mt-1">Detail kehadiran masing-masing karyawan</p>
+                        </div>
+                    </div>
+                    
+                    <div class="overflow-x-auto">
+                        <table class="min-w-full divide-y divide-gray-200">
+                            <thead class="bg-gray-50">
+                                <tr>
+                                    <th scope="col" class="px-6 py-3 text-left text-sm font-medium text-gray-500 uppercase tracking-wider">
+                                        Karyawan
+                                    </th>
+                                    <th scope="col" class="px-6 py-3 text-left text-sm font-medium text-gray-500 uppercase tracking-wider">
+                                        Hadir Untuk
+                                    </th>
+                                    <th scope="col" class="px-6 py-3 text-center text-sm font-medium text-gray-500 uppercase tracking-wider">
+                                        Minggu Ini
+                                    </th>
+                                    <th scope="col" class="px-6 py-3 text-center text-sm font-medium text-gray-500 uppercase tracking-wider">
+                                        Bulan Ini
+                                    </th>
+                                </tr>
+                            </thead>
+                            <tbody class="bg-white divide-y divide-gray-200">
+                                @foreach($employeeStats as $stat)
+                                <tr class="hover:bg-gray-50 transition-colors duration-150">
+                                    <td class="px-6 py-4 whitespace-nowrap">
+                                        <div class="flex items-center">
+                                            <div class="flex-shrink-0 h-10 w-10 rounded-full bg-purple-100 flex items-center justify-center text-purple-600 font-medium">
+                                                {{ strtoupper(substr($stat['nama'], 0, 1)) }}
+                                            </div>
+                                            <div class="ml-4">
+                                                <div class="text-base font-medium text-gray-900">{{ $stat['nama'] }}</div>
+                                            </div>
+                                        </div>
+                                    </td>
+                                    <td class="px-6 py-4 whitespace-nowrap">
+                                        <div class="text-base text-gray-500">{{ $stat['hadir_untuk'] }}</div>
+                                    </td>
+                                    <td class="px-6 py-4 whitespace-nowrap">
+                                        <div class="flex flex-col items-center">
+                                            <div class="relative w-full h-2 bg-gray-200 rounded-full mb-2">
+                                                <div class="absolute top-0 left-0 h-full bg-amber-500 rounded-full" style="width: {{ $stat['weekly']['percentage'] }}%"></div>
+                                            </div>
+                                            <div class="text-sm">
+                                                <span class="font-medium text-gray-900">{{ number_format(abs($stat['weekly']['percentage']), 1) }}%</span>
+                                                <span class="text-gray-500">({{ $stat['weekly']['attendance'] }}/7)</span>
+                                            </div>
+                                        </div>
+                                    </td>
+                                    <td class="px-6 py-4 whitespace-nowrap">
+                                        <div class="flex flex-col items-center">
+                                            <div class="relative w-full h-2 bg-gray-200 rounded-full mb-2">
+                                                <div class="absolute top-0 left-0 h-full bg-purple-500 rounded-full" style="width: {{ $stat['monthly']['percentage'] }}%"></div>
+                                            </div>
+                                            <div class="text-sm">
+                                                <span class="font-medium text-gray-900">{{ number_format(abs($stat['monthly']['percentage']), 1) }}%</span>
+                                                <span class="text-gray-500">({{ $stat['monthly']['attendance'] }}/{{ now()->daysInMonth }})</span>
+                                            </div>
+                                        </div>
+                                    </td>
+                                </tr>
+                                @endforeach
+                            </tbody>
+                        </table>
                     </div>
                 </div>
             </div>
@@ -144,7 +260,7 @@
             <div class="bg-white rounded-xl drop-shadow-md overflow-hidden mb-6">
                 <div
                     class="px-8 py-4 border-b border-gray-200 flex flex-col sm:flex-row justify-between items-start sm:items-center">
-                    <h2 class="text-lg font-semibold text-gray-800 mb-2 sm:mb-0">Kelola Karyawan</h2>
+                    <h2 class="text-xl font-semibold text-gray-800 mb-2 sm:mb-0">Kelola Karyawan</h2>
                     <div class="flex flex-col sm:flex-row space-y-4 sm:space-y-0 sm:space-x-4 w-full sm:w-auto">
                         <div class="relative w-full sm:w-56">
                             <input type="text" id="employeeSearch" placeholder="Cari karyawan..."
@@ -223,14 +339,14 @@
             <div class="bg-white rounded-xl drop-shadow-md overflow-hidden">
                 <div
                     class="px-8 py-4 border-b border-gray-200 flex flex-col sm:flex-row justify-between items-start sm:items-center">
-                    <h2 class="text-lg font-semibold text-gray-800 mb-2 sm:mb-0">Riwayat Presensi Terkini</h2>
+                    <h2 class="text-xl font-semibold text-gray-800 mb-2 sm:mb-0">Riwayat Presensi Terkini</h2>
                     <div class="flex flex-col sm:flex-row space-y-4 sm:space-y-0 sm:space-x-4 w-full sm:w-auto">
                         <!-- Search Input -->
-                        <div class="relative w-full sm:w-56">
-                            <input type="text" id="attendanceSearch" placeholder="Cari presensi..."
-                                class="pl-10 pr-4 py-2 w-full rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-purple-500 text-base">
-                            <i class="fas fa-search absolute left-3 top-3 text-gray-400"></i>
-                        </div>
+                    <div class="relative w-full sm:w-56">
+                        <input type="text" id="attendanceSearch" placeholder="Cari presensi..."
+                            class="pl-10 pr-4 py-2 w-full rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-purple-500 text-base">
+                        <i class="fas fa-search absolute left-3 top-3 text-gray-400"></i>
+                    </div>
                         <!-- Sort Dropdown -->
                         <div class="relative w-full sm:w-48">
                             <select id="attendanceSort"
@@ -238,7 +354,7 @@
                                 <option value="latest">Terbaru</option>
                                 <option value="oldest">Terlama</option>
                             </select>
-                        </div>
+                </div>
                         <!-- Date Filter -->
                         <div class="relative w-full sm:w-48">
                             <input type="date" id="attendanceDateFilter"
@@ -250,19 +366,26 @@
                     <table class="min-w-full divide-y divide-gray-200">
                         <thead class="bg-gray-50">
                             <tr>
-                                <th scope="col" class="px-8 py-3 text-left text-sm font-medium text-gray-500 uppercase tracking-wider">
+                                <th scope="col"
+                                    class="px-8 py-3 text-left text-sm font-medium text-gray-500 uppercase tracking-wider">
                                     Nama</th>
-                                <th scope="col" class="px-8 py-3 text-left text-sm font-medium text-gray-500 uppercase tracking-wider">
+                                <th scope="col"
+                                    class="px-8 py-3 text-left text-sm font-medium text-gray-500 uppercase tracking-wider">
                                     Lokasi</th>
-                                <th scope="col" class="px-8 py-3 text-left text-sm font-medium text-gray-500 uppercase tracking-wider">
+                                <th scope="col"
+                                    class="px-8 py-3 text-left text-sm font-medium text-gray-500 uppercase tracking-wider">
                                     Tanggal</th>
-                                <th scope="col" class="px-8 py-3 text-left text-sm font-medium text-gray-500 uppercase tracking-wider">
+                                <th scope="col"
+                                    class="px-8 py-3 text-left text-sm font-medium text-gray-500 uppercase tracking-wider">
                                     Jam Masuk</th>
-                                <th scope="col" class="px-8 py-3 text-left text-sm font-medium text-gray-500 uppercase tracking-wider">
+                                <th scope="col"
+                                    class="px-8 py-3 text-left text-sm font-medium text-gray-500 uppercase tracking-wider">
                                     Jam Keluar</th>
-                                <th scope="col" class="px-8 py-3 text-left text-sm font-medium text-gray-500 uppercase tracking-wider">
-                                    Durasi</th>
-                                <th scope="col" class="px-8 py-3 text-right text-sm font-medium text-gray-500 uppercase tracking-wider">
+                                <th scope="col"
+                                    class="px-8 py-3 text-left text-sm font-medium text-gray-500 uppercase tracking-wider">
+                                    Durasi Kerja</th>
+                                <th scope="col"
+                                    class="px-8 py-3 text-right text-sm font-medium text-gray-500 uppercase tracking-wider">
                                     Aksi</th>
                             </tr>
                         </thead>
@@ -274,15 +397,16 @@
                                         @if($attendance->foto)
                                         <div class="flex-shrink-0 h-10 w-10">
                                             <img class="h-10 w-10 rounded-full"
-                                                src="{{ asset('storage/' . $attendance->foto) }}" alt="Foto">
+                                                 src="{{ asset('storage/' . $attendance->foto) }}" alt="Foto">
                                         </div>
-                                        @else
+                                    @else
                                         <div class="flex-shrink-0 h-10 w-10 rounded-full bg-gray-200 flex items-center justify-center text-gray-400">
                                             <i class="fas fa-user"></i>
                                         </div>
-                                        @endif
+                                    @endif
                                         <div class="ml-4">
-                                            <div class="text-base font-medium text-gray-900">{{ $attendance->nama }}</div>
+                                            <div class="text-base font-medium text-gray-900">{{ $attendance->nama }}
+                                            </div>
                                             <div class="text-sm text-gray-500">{{ $attendance->hadir_untuk }}</div>
                                         </div>
                                     </div>
@@ -291,35 +415,54 @@
                                     <div class="text-base text-gray-500">{{ $attendance->lokasi }}</div>
                                 </td>
                                 <td class="px-8 py-4 whitespace-nowrap">
-                                    <div class="text-base text-gray-500">{{ date('Y-m-d', strtotime($attendance->tanggal)) }}</div>
+                                    <div class="text-base text-gray-500">
+                                        {{ date('Y-m-d', strtotime($attendance->tanggal)) }}</div>
                                 </td>
                                 <td class="px-8 py-4 whitespace-nowrap">
-                                    <div class="text-base text-gray-500">{{ $attendance->check_in ? date('H:i:s', strtotime($attendance->check_in)) : '-' }}</div>
+                                    <div class="text-base text-gray-500">
+                                        {{ $attendance->check_in ? date('H:i:s', strtotime($attendance->check_in)) : '-' }}
+                                    </div>
                                 </td>
                                 <td class="px-8 py-4 whitespace-nowrap">
-                                    <div class="text-base text-gray-500">{{ $attendance->check_out ? date('H:i:s', strtotime($attendance->check_out)) : '-' }}</div>
+                                    <div class="text-base text-gray-500">
+                                        {{ $attendance->check_out ? date('H:i:s', strtotime($attendance->check_out)) : '-' }}
+                                    </div>
                                 </td>
                                 <td class="px-8 py-4 whitespace-nowrap">
                                     <div class="text-base text-gray-500">
                                         @if($attendance->check_out)
-                                            {{ floor($attendance->work_hours / 60) }} jam {{ $attendance->work_hours % 60 }} menit
+                                            @php
+                                                $totalMinutes = abs($attendance->work_hours); // Ensure positive value
+                                                if ($totalMinutes < 60) {
+                                                    echo $totalMinutes . ' menit';
+                                                } elseif ($totalMinutes == 60) {
+                                                    echo '1 jam';
+                                                } else {
+                                                    $hours = floor($totalMinutes / 60);
+                                                    $minutes = $totalMinutes % 60;
+                                                    echo $minutes > 0 ? "$hours jam $minutes menit" : "$hours jam";
+                                                }
+                                            @endphp
                                         @else
                                             Masih bekerja
                                         @endif
                                     </div>
                                 </td>
                                 <td class="px-8 py-4 whitespace-nowrap text-right text-base font-medium">
-                                    <button data-id="{{ $attendance->id }}" class="detail-btn text-purple-600 hover:text-purple-900 mr-3">
+                                    <button data-id="{{ $attendance->id }}"
+                                        class="detail-btn text-purple-600 hover:text-purple-900 mr-3">
                                         <i class="fas fa-eye"></i>
                                     </button>
-                                    <button data-id="{{ $attendance->id }}" data-nama="{{ $attendance->nama }}" class="delete-attendance-btn text-red-600 hover:text-red-900">
+                                    <button data-id="{{ $attendance->id }}" data-nama="{{ $attendance->nama }}"
+                                        class="delete-attendance-btn text-red-600 hover:text-red-900">
                                         <i class="fas fa-trash"></i>
                                     </button>
                                 </td>
                             </tr>
                             @empty
                             <tr>
-                                <td colspan="7" class="px-8 py-4 text-center text-base text-gray-500">Belum ada data presensi</td>
+                                <td colspan="7" class="px-8 py-4 text-center text-base text-gray-500">Belum ada data
+                                    presensi</td>
                             </tr>
                             @endforelse
                         </tbody>
@@ -401,6 +544,7 @@
 <!-- Modal Konfirmasi Delete Karyawan -->
 <x-delete-employee-modal></x-delete-employee-modal>
 
+@push('scripts')
 <script>
     document.addEventListener('DOMContentLoaded', function () {
         // =============================================
@@ -506,6 +650,20 @@
             }, 300);
         };
 
+        // Helper function to format duration
+        function formatDuration(totalMinutes) {
+            totalMinutes = Math.abs(totalMinutes); // Ensure positive value
+            if (totalMinutes < 60) {
+                return `${totalMinutes} menit`;
+            } else if (totalMinutes === 60) {
+                return '1 jam';
+            } else {
+                const hours = Math.floor(totalMinutes / 60);
+                const minutes = totalMinutes % 60;
+                return minutes > 0 ? `${hours} jam ${minutes} menit` : `${hours} jam`;
+            }
+        }
+
         // =============================================
         // DETAIL ATTENDANCE MODAL
         // =============================================
@@ -518,24 +676,29 @@
             detailButtons.forEach(button => {
                 button.addEventListener('click', async () => {
                     try {
-                        const response = await fetch(`/admin/attendance/${button.dataset.id}`, {
-                            headers: {
-                                'Accept': 'application/json'
-                            }
-                        });
+                        const response = await fetch(
+                            `/admin/attendance/${button.dataset.id}`, {
+                                headers: {
+                                    'Accept': 'application/json'
+                                }
+                            });
                         if (!response.ok) throw new Error('Gagal memuat data');
                         const data = await response.json();
 
-                        // Safely set image sources
+                        // Set check-in photo
                         setImageSafe('detailFotoCheckIn', data.foto);
+
+                        // Handle check-out section
                         if (data.check_out) {
-                            document.getElementById('checkoutInfo').classList.remove('hidden');
-                            setImageSafe('detailFotoCheckOut', data.foto_checkout);
+                            document.getElementById('checkoutInfo').classList.remove(
+                                'hidden');
+                            setCheckoutImage('detailFotoCheckOut', data.foto_checkout, data
+                                .early_leave_reason);
                         } else {
                             document.getElementById('checkoutInfo').classList.add('hidden');
                         }
 
-                        // Safely set text content
+                        // Set text content
                         setTextSafe('detailNama', data.nama);
                         setTextSafe('detailHadirUntuk', data.hadir_untuk);
                         setTextSafe('detailLokasi', data.lokasi);
@@ -544,19 +707,21 @@
                         setTextSafe('detailCheckOutTime', data.check_out);
 
                         // Update status
-                        const statusElement = document.getElementById('detailCheckInStatus');
+                        const statusElement = document.getElementById(
+                        'detailCheckInStatus');
                         if (statusElement) {
-                            statusElement.textContent = data.check_out ? 'Selesai Bekerja' : 'Masih Bekerja';
-                            statusElement.className = data.check_out ? 
-                                'text-base font-medium text-green-600' : 
+                            statusElement.textContent = data.check_out ? 'Selesai Bekerja' :
+                                'Masih Bekerja';
+                            statusElement.className = data.check_out ?
+                                'text-base font-medium text-green-600' :
                                 'text-base font-medium text-blue-600';
                         }
 
                         // Handle work hours
                         if (data.check_out) {
-                            const hours = Math.floor(data.work_hours / 60);
-                            const minutes = data.work_hours % 60;
-                            setTextSafe('detailWorkHours', `${hours} jam ${minutes} menit`);
+                            const totalMinutes = Math.abs(data
+                            .work_hours); // Ensure positive
+                            setTextSafe('detailWorkHours', formatDuration(totalMinutes));
                         }
 
                         // Handle early leave reason
@@ -569,8 +734,10 @@
                         }
 
                         // Update attendance percentage
-                        setTextSafe('detailAttendancePercentage', 
-                            data.attendance_percentage ? `${data.attendance_percentage}%` : '0%'
+                        const percentage = Math.abs(data.attendance_percentage ||
+                        0); // Ensure positive
+                        setTextSafe('detailAttendancePercentage',
+                            percentage > 0 ? `${percentage}%` : '0%'
                         );
 
                         showModal(detailModal, detailModalContent);
@@ -598,7 +765,7 @@
 
         if (addEmployeeBtn) {
             addEmployeeBtn.addEventListener('click', () => showModal(addEmployeeModal,
-                addEmployeeModalContent));
+            addEmployeeModalContent));
         }
 
         if (closeAddEmployeeModalBtn) {
@@ -1011,13 +1178,6 @@
         const attendanceSearch = document.getElementById('attendanceSearch');
         if (attendanceSearch) {
             const searchAttendances = debounce(async (query) => {
-                if (query.length < 2 && !attendanceDateFilter.value && attendanceSort.value ===
-                    'latest') {
-                    // Jika tidak ada pencarian, tanggal, atau sort bukan default, reload data asli
-                    window.location.reload();
-                    return;
-                }
-
                 try {
                     const loadingIcon = attendanceSearch.nextElementSibling;
                     loadingIcon.classList.remove('fa-search');
@@ -1026,16 +1186,14 @@
                     const params = new URLSearchParams();
                     if (query) params.append('search', query);
                     if (attendanceSort.value) params.append('sort', attendanceSort.value);
-                    if (attendanceDateFilter.value) params.append('date', attendanceDateFilter
-                        .value);
+                    if (attendanceDateFilter.value) params.append('date', attendanceDateFilter.value);
                     params.append('per_page', perPageSelect.value);
 
                     const response = await fetch(`/admin/attendances/search?${params.toString()}`, {
                         headers: {
                             'Accept': 'application/json',
                             'X-Requested-With': 'XMLHttpRequest',
-                            'X-CSRF-TOKEN': document.querySelector(
-                                'meta[name="csrf-token"]').content
+                            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content
                         }
                     });
 
@@ -1054,10 +1212,11 @@
                     loadingIcon.classList.add('fa-search');
                     loadingIcon.classList.remove('fa-spinner', 'fa-spin');
                 }
-            }, 500);
+            });
 
             attendanceSearch.addEventListener('input', (e) => {
-                searchAttendances(e.target.value.trim());
+                const query = e.target.value.trim();
+                searchAttendances(query);
             });
         }
 
@@ -1071,51 +1230,53 @@
 
             tbody.innerHTML = '';
 
-            if (attendances && attendances.length > 0) {
-                attendances.forEach(attendance => {
+            if (attendances && attendances.success && attendances.data && attendances.data.length > 0) {
+                attendances.data.forEach(attendance => {
                     const row = document.createElement('tr');
                     row.className = 'hover:bg-gray-50 transition-colors duration-150';
                     row.innerHTML = `
-                <td class="px-8 py-4 whitespace-nowrap">
-                    <div class="flex items-center">
-                        ${attendance.foto ? 
-                            `<div class="flex-shrink-0 h-10 w-10">
-                                <img class="h-10 w-10 rounded-full" src="/storage/${attendance.foto}" alt="Foto">
-                            </div>` : 
-                            `<div class="flex-shrink-0 h-10 w-10 rounded-full bg-gray-200 flex items-center justify-center text-gray-400">
-                                <i class="fas fa-user"></i>
-                            </div>`
-                        }
-                        <div class="ml-4">
-                            <div class="text-base font-medium text-gray-900">${attendance.nama}</div>
+                    <td class="px-8 py-4 whitespace-nowrap">
+                        <div class="flex items-center">
+                            ${attendance.foto ? 
+                                `<div class="flex-shrink-0 h-10 w-10">
+                                    <img class="h-10 w-10 rounded-full" src="${attendance.foto}" alt="Foto">
+                                </div>` : 
+                                `<div class="flex-shrink-0 h-10 w-10 rounded-full bg-gray-200 flex items-center justify-center text-gray-400">
+                                    <i class="fas fa-user"></i>
+                                </div>`
+                            }
+                            <div class="ml-4">
+                                <div class="text-base font-medium text-gray-900">${attendance.nama}</div>
                             <div class="text-sm text-gray-500">${attendance.hadir_untuk}</div>
+                            </div>
                         </div>
-                    </div>
-                </td>
-                <td class="px-8 py-4 whitespace-nowrap">
+                    </td>
+                    <td class="px-8 py-4 whitespace-nowrap">
                     <div class="text-base text-gray-500">${attendance.lokasi}</div>
-                </td>
-                <td class="px-8 py-4 whitespace-nowrap">
+                    </td>
+                    <td class="px-8 py-4 whitespace-nowrap">
                     <div class="text-base text-gray-500">${attendance.tanggal}</div>
-                </td>
-                <td class="px-8 py-4 whitespace-nowrap">
+                    </td>
+                    <td class="px-8 py-4 whitespace-nowrap">
                     <div class="text-base text-gray-500">${attendance.check_in}</div>
                 </td>
                 <td class="px-8 py-4 whitespace-nowrap">
                     <div class="text-base text-gray-500">${attendance.check_out}</div>
                 </td>
                 <td class="px-8 py-4 whitespace-nowrap">
-                    <div class="text-base text-gray-500">${attendance.duration}</div>
-                </td>
-                <td class="px-8 py-4 whitespace-nowrap text-right text-base font-medium">
-                    <button data-id="${attendance.id}" class="detail-btn text-purple-600 hover:text-purple-900 mr-3">
-                        <i class="fas fa-eye"></i>
-                    </button>
-                    <button data-id="${attendance.id}" data-nama="${attendance.nama}" class="delete-attendance-btn text-red-600 hover:text-red-900">
-                        <i class="fas fa-trash"></i>
-                    </button>
-                </td>
-            `;
+                    <div class="text-base text-gray-500">${
+                        attendance.check_out && !isNaN(attendance.duration) ? formatDuration(Math.abs(attendance.duration)) : 'Masih bekerja'
+                    }</div>
+                    </td>
+                    <td class="px-8 py-4 whitespace-nowrap text-right text-base font-medium">
+                        <button data-id="${attendance.id}" class="detail-btn text-purple-600 hover:text-purple-900 mr-3">
+                            <i class="fas fa-eye"></i>
+                        </button>
+                        <button data-id="${attendance.id}" data-nama="${attendance.nama}" class="delete-attendance-btn text-red-600 hover:text-red-900">
+                            <i class="fas fa-trash"></i>
+                        </button>
+                    </td>
+                `;
                     tbody.appendChild(row);
                 });
 
@@ -1123,10 +1284,10 @@
                 attachAttendanceEventListeners();
             } else {
                 tbody.innerHTML = `
-            <tr>
+                <tr>
                 <td colspan="7" class="px-8 py-4 text-center text-base text-gray-500">Tidak ditemukan data presensi</td>
-            </tr>
-        `;
+                </tr>
+            `;
             }
         }
 
@@ -1162,41 +1323,48 @@
             document.querySelectorAll('.detail-btn').forEach(button => {
                 button.addEventListener('click', async () => {
                     try {
-                        const response = await fetch(`/admin/attendance/${button.dataset.id}`);
+                        const response = await fetch(
+                            `/admin/attendance/${button.dataset.id}`);
                         if (!response.ok) throw new Error('Failed to load data');
                         const data = await response.json();
 
-                        // Safely set image sources
+                        // Set check-in photo
                         setImageSafe('detailFotoCheckIn', data.foto);
+
+                        // Handle check-out section
                         if (data.check_out) {
-                            document.getElementById('checkoutInfo').classList.remove('hidden');
-                            setImageSafe('detailFotoCheckOut', data.foto_checkout);
+                            document.getElementById('checkoutInfo').classList.remove(
+                                'hidden');
+                            setCheckoutImage('detailFotoCheckOut', data.foto_checkout, data
+                                .early_leave_reason);
                         } else {
                             document.getElementById('checkoutInfo').classList.add('hidden');
                         }
 
-                        // Safely set text content
+                        // Set text content
                         setTextSafe('detailNama', data.nama);
                         setTextSafe('detailHadirUntuk', data.hadir_untuk);
                         setTextSafe('detailLokasi', data.lokasi);
                         setTextSafe('detailTanggal', data.tanggal);
                         setTextSafe('detailCheckInTime', data.check_in);
                         setTextSafe('detailCheckOutTime', data.check_out);
-                        
+
                         // Update status
-                        const statusElement = document.getElementById('detailCheckInStatus');
+                        const statusElement = document.getElementById(
+                        'detailCheckInStatus');
                         if (statusElement) {
-                            statusElement.textContent = data.check_out ? 'Selesai Bekerja' : 'Masih Bekerja';
-                            statusElement.className = data.check_out ? 
-                                'text-base font-medium text-green-600' : 
+                            statusElement.textContent = data.check_out ? 'Selesai Bekerja' :
+                                'Masih Bekerja';
+                            statusElement.className = data.check_out ?
+                                'text-base font-medium text-green-600' :
                                 'text-base font-medium text-blue-600';
                         }
 
                         // Handle work hours
                         if (data.check_out) {
-                            const hours = Math.floor(data.work_hours / 60);
-                            const minutes = data.work_hours % 60;
-                            setTextSafe('detailWorkHours', `${hours} jam ${minutes} menit`);
+                            const totalMinutes = Math.abs(data
+                            .work_hours); // Ensure positive
+                            setTextSafe('detailWorkHours', formatDuration(totalMinutes));
                         }
 
                         // Handle early leave reason
@@ -1209,8 +1377,10 @@
                         }
 
                         // Update attendance percentage
-                        setTextSafe('detailAttendancePercentage', 
-                            data.attendance_percentage ? `${data.attendance_percentage}%` : '0%'
+                        const percentage = Math.abs(data.attendance_percentage ||
+                        0); // Ensure positive
+                        setTextSafe('detailAttendancePercentage',
+                            percentage > 0 ? `${percentage}%` : '0%'
                         );
 
                         showModal(detailModal, detailModalContent);
@@ -1283,29 +1453,262 @@
 
         // Update every 30 seconds
         setInterval(updateUnreadNotifications, 30000);
-    });
 
-    // Safely set image sources with error handling
-    function setImageSafe(elementId, imageUrl, defaultUrl = '/images/default-user.jpg') {
-        const element = document.getElementById(elementId);
-        if (element) {
-            if (imageUrl) {
-                element.src = imageUrl;
-                element.onerror = () => {
+        // Safely set image sources with error handling
+        function setImageSafe(elementId, imageUrl, defaultUrl = '/images/default-user.jpg') {
+            const element = document.getElementById(elementId);
+            if (element) {
+                if (imageUrl) {
+                    element.src = imageUrl;
+                    element.onerror = () => {
+                        element.src = defaultUrl;
+                    };
+                } else {
                     element.src = defaultUrl;
-                };
-            } else {
-                element.src = defaultUrl;
+                }
             }
         }
-    }
 
-    // Safely set text content
-    function setTextSafe(elementId, text, defaultText = '-') {
-        const element = document.getElementById(elementId);
-        if (element) {
-            element.textContent = text || defaultText;
+        // Handle checkout image (auto-checkout vs manual)
+        function setCheckoutImage(elementId, imageUrl, earlyLeaveReason) {
+            const container = document.getElementById('checkoutPhotoContainer');
+            if (!container) {
+                console.error('Checkout photo container not found!');
+                return;
+            }
+
+            if (!imageUrl && earlyLeaveReason === 'Auto checkout by system') {
+                // Display placeholder for auto-checkout
+                container.innerHTML = `
+                    <div class="w-full h-56 bg-white flex flex-col items-center justify-center text-gray-500 rounded-xl">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-16 w-16 mb-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                        </svg>
+                        <p class="text-base font-medium">Auto Checkout by System</p>
+                    </div>
+                `;
+            } else {
+                // Display image for manual checkout
+                container.innerHTML = `
+                    <img id="${elementId}" src="" alt="Foto Check Out" class="w-full h-56 object-cover bg-gray-200">
+                    <div class="absolute inset-0 bg-gradient-to-t from-black/40 to-transparent"></div>
+                `;
+                const imgElement = document.getElementById(elementId);
+                if (imgElement) {
+                    if (imageUrl) {
+                        imgElement.src = imageUrl;
+                        imgElement.onerror = () => {
+                            imgElement.src = '/images/default-user.jpg';
+                        };
+                    } else {
+                        imgElement.src = '/images/default-user.jpg';
+                    }
+                }
+            }
         }
-    }
+
+        // Safely set text content
+        function setTextSafe(elementId, text, defaultText = '-') {
+            const element = document.getElementById(elementId);
+            if (element) {
+                element.textContent = text || defaultText;
+            }
+        }
+
+        // Gradient for charts
+        function createGradient(ctx, color1, color2) {
+            const gradient = ctx.createLinearGradient(0, 0, 0, 300);
+            gradient.addColorStop(0, color1);
+            gradient.addColorStop(1, color2);
+            return gradient;
+        }
+
+        // Custom tooltip styles
+        const customTooltipStyle = {
+            backgroundColor: 'rgba(255, 255, 255, 0.95)',
+            borderColor: 'rgba(0, 0, 0, 0.1)',
+            borderWidth: 1,
+            titleColor: '#1F2937',
+            bodyColor: '#4B5563',
+            bodyFont: {
+                family: "'Fredoka', sans-serif",
+                size: 13
+            },
+            padding: 12,
+            boxPadding: 6,
+            cornerRadius: 8,
+            boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06)'
+        };
+
+        // Weekly Chart
+        const weeklyCtx = document.getElementById('weeklyChart').getContext('2d');
+        const weeklyGradient = createGradient(weeklyCtx, 'rgba(245, 158, 11, 0.3)', 'rgba(245, 158, 11, 0.02)');
+        
+        new Chart(weeklyCtx, {
+            type: 'bar',
+            data: {
+                labels: {!! json_encode($weeklyAttendances->keys()) !!},
+                datasets: [{
+                    label: 'Persentase Kehadiran',
+                    data: {!! json_encode($weeklyAttendances->pluck('percentage')) !!},
+                    backgroundColor: weeklyGradient,
+                    borderColor: 'rgb(245, 158, 11)',
+                    borderWidth: 2,
+                    borderRadius: 8,
+                    borderSkipped: false,
+                    maxBarThickness: 40,
+                    hoverBackgroundColor: 'rgba(245, 158, 11, 0.4)'
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                animation: {
+                    duration: 1000,
+                    easing: 'easeInOutQuart'
+                },
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        max: 100,
+                        grid: {
+                            color: 'rgba(0, 0, 0, 0.05)',
+                            drawBorder: false
+                        },
+                        ticks: {
+                            callback: function(value) {
+                                return value + '%';
+                            },
+                            font: {
+                                family: "'Fredoka', sans-serif",
+                                size: 11
+                            },
+                            color: '#6B7280'
+                        }
+                    },
+                    x: {
+                        grid: {
+                            display: false
+                        },
+                        ticks: {
+                            font: {
+                                family: "'Fredoka', sans-serif",
+                                size: 11
+                            },
+                            color: '#6B7280'
+                        }
+                    }
+                },
+                plugins: {
+                    legend: {
+                        display: false
+                    },
+                    tooltip: {
+                        ...customTooltipStyle,
+                        callbacks: {
+                            label: function(context) {
+                                const attendance = {!! json_encode($weeklyAttendances) !!}[context.label];
+                                return [
+                                    `Kehadiran: ${context.parsed.y.toFixed(1)}%`,
+                                    `Total: ${attendance.count} karyawan`
+                                ];
+                            }
+                        }
+                    }
+                }
+            }
+        });
+
+        // Monthly Chart
+        const monthlyCtx = document.getElementById('monthlyChart').getContext('2d');
+        const monthlyGradient = createGradient(monthlyCtx, 'rgba(147, 51, 234, 0.2)', 'rgba(147, 51, 234, 0.02)');
+        
+        new Chart(monthlyCtx, {
+            type: 'line',
+            data: {
+                labels: {!! json_encode($monthlyAttendances->keys()) !!},
+                datasets: [{
+                    label: 'Persentase Kehadiran',
+                    data: {!! json_encode($monthlyAttendances->pluck('percentage')) !!},
+                    backgroundColor: monthlyGradient,
+                    borderColor: 'rgb(147, 51, 234)',
+                    borderWidth: 2,
+                    tension: 0.4,
+                    fill: true,
+                    pointBackgroundColor: 'white',
+                    pointBorderColor: 'rgb(147, 51, 234)',
+                    pointBorderWidth: 2,
+                    pointRadius: 4,
+                    pointHoverRadius: 6,
+                    pointHoverBackgroundColor: 'white',
+                    pointHoverBorderColor: 'rgb(147, 51, 234)',
+                    pointHoverBorderWidth: 3
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                animation: {
+                    duration: 1000,
+                    easing: 'easeInOutQuart'
+                },
+                interaction: {
+                    intersect: false,
+                    mode: 'index'
+                },
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        max: 100,
+                        grid: {
+                            color: 'rgba(0, 0, 0, 0.05)',
+                            drawBorder: false
+                        },
+                        ticks: {
+                            callback: function(value) {
+                                return value + '%';
+                            },
+                            font: {
+                                family: "'Fredoka', sans-serif",
+                                size: 11
+                            },
+                            color: '#6B7280'
+                        }
+                    },
+                    x: {
+                        grid: {
+                            display: false
+                        },
+                        ticks: {
+                            maxTicksLimit: 10,
+                            font: {
+                                family: "'Fredoka', sans-serif",
+                                size: 11
+                            },
+                            color: '#6B7280'
+                        }
+                    }
+                },
+                plugins: {
+                    legend: {
+                        display: false
+                    },
+                    tooltip: {
+                        ...customTooltipStyle,
+                        callbacks: {
+                            label: function(context) {
+                                const attendance = {!! json_encode($monthlyAttendances) !!}[context.label];
+                                return [
+                                    `Kehadiran: ${context.parsed.y.toFixed(1)}%`,
+                                    `Total: ${attendance.count} karyawan`
+                                ];
+                            }
+                        }
+                    }
+                }
+            }
+        });
+    });
 </script>
+@endpush
 @endsection

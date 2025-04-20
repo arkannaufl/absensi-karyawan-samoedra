@@ -2,7 +2,7 @@
 
 // Tambahkan flag untuk mencegah multiple submit
 let isSubmitting = false;
-let photoTaken = false;  // Add flag to track if photo has been taken
+let photoTaken = false; // Add flag to track if photo has been taken
 
 // Ambil elemen video dan canvas
 const video = document.getElementById('video');
@@ -34,15 +34,25 @@ updateWaktu();
 
 // Akses kamera
 if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
-    navigator.mediaDevices.getUserMedia({
-            video: {
-                width: 320,
-                height: 240,
-                facingMode: 'user'
-            }
-        })
+    // Request specific video dimensions
+    const constraints = {
+        video: {
+            width: { ideal: 640 },
+            height: { ideal: 480 },
+            aspectRatio: 4/3,
+            facingMode: 'user'
+        }
+    };
+
+    navigator.mediaDevices.getUserMedia(constraints)
         .then(stream => {
             video.srcObject = stream;
+            // Set canvas size when video metadata is loaded
+            video.onloadedmetadata = () => {
+                // Set canvas size to match video dimensions exactly
+                canvas.width = video.videoWidth;
+                canvas.height = video.videoHeight;
+            };
         })
         .catch(err => {
             console.error("Error accessing camera: ", err);
@@ -77,12 +87,26 @@ function capturePhoto() {
         flash.classList.remove('active');
     }, 300);
 
-    // Capture image
-    canvas.getContext('2d').drawImage(video, 0, 0, canvas.width, canvas.height);
+    // Get the video dimensions
+    const videoWidth = video.videoWidth;
+    const videoHeight = video.videoHeight;
+
+    // Set canvas dimensions to match video
+    canvas.width = videoWidth;
+    canvas.height = videoHeight;
+
+    // Get the context and draw the video frame
+    const ctx = canvas.getContext('2d');
+    // Clear the canvas first
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    // Draw the video frame
+    ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+
+    // Show canvas and hide video
     canvas.classList.remove('hidden');
     video.classList.add('hidden');
     captureBtnText.textContent = 'Ambil Ulang';
-    photoTaken = true;  // Set flag when photo is taken
+    photoTaken = true;
 }
 
 // Tangkap foto dengan countdown
@@ -94,7 +118,7 @@ captureBtn.addEventListener('click', () => {
         canvas.classList.add('hidden');
         video.classList.remove('hidden');
         captureBtnText.textContent = 'Ambil Foto';
-        photoTaken = false;  // Reset flag when retaking photo
+        photoTaken = false; // Reset flag when retaking photo
     }
 });
 
@@ -128,6 +152,7 @@ if (navigator.geolocation) {
 const namaSelect = document.getElementById('nama');
 const hadirUntukInput = document.getElementById('hadir_untuk');
 
+// Di dalam event listener namaSelect
 namaSelect.addEventListener('change', async function () {
     const selectedOption = this.options[this.selectedIndex];
     const hadirUntuk = selectedOption.getAttribute('data-hadir-untuk');
@@ -143,18 +168,25 @@ namaSelect.addEventListener('change', async function () {
                 'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content
             }
         });
-        
+
         if (!response.ok) {
             throw new Error('Network response was not ok');
         }
-        
+
         const data = await response.json();
-        
+
+        if (!data.canCheckIn) {
+            // Jika sudah checkout, tampilkan pesan dan disable form
+            showAlert('Peringatan', data.message, 'warning');
+            document.getElementById('submitBtn').disabled = true;
+            document.getElementById('captureBtn').disabled = true;
+            return;
+        }
+
         if (data.checkedIn) {
             document.getElementById('alreadyCheckedInWarning').classList.remove('hidden');
             document.getElementById('submitBtnText').textContent = 'Check Out';
-            
-            // Always show early leave reason when checking out
+            // Selalu tampilkan field alasan checkout
             document.getElementById('earlyLeaveContainer').classList.remove('hidden');
             document.getElementById('earlyLeaveReason').setAttribute('required', 'required');
         } else {
@@ -162,10 +194,112 @@ namaSelect.addEventListener('change', async function () {
             document.getElementById('submitBtnText').textContent = 'Check In';
             document.getElementById('earlyLeaveContainer').classList.add('hidden');
             document.getElementById('earlyLeaveReason').removeAttribute('required');
+            // Reset dan enable form controls
+            document.getElementById('submitBtn').disabled = false;
+            document.getElementById('captureBtn').disabled = false;
+        }
+
+        if (data.message) {
+            showAlert('Informasi', data.message, data.checkedIn ? 'info' : 'warning');
         }
     } catch (error) {
         console.error('Error checking attendance:', error);
-        alert('Terjadi kesalahan saat memeriksa status presensi');
+        showAlert('Error', 'Terjadi kesalahan saat memeriksa status presensi', 'error');
+    }
+});
+
+// Validasi form pada submit
+form.addEventListener('submit', async function (e) {
+    e.preventDefault();
+
+    if (!photoTaken) {
+        showAlert('Peringatan', 'Silakan ambil foto terlebih dahulu', 'warning');
+        return;
+    }
+
+    if (isSubmitting) return;
+    isSubmitting = true;
+
+    const namaInput = document.getElementById('nama');
+    const hadirUntukInput = document.getElementById('hadir_untuk');
+    const lokasiInput = document.getElementById('lokasi');
+    const tanggalInput = document.getElementById('tanggal');
+    const jamInput = document.getElementById('jam');
+    const earlyLeaveReason = document.getElementById('earlyLeaveReason');
+    const submitBtnText = document.getElementById('submitBtnText');
+    const isCheckOut = submitBtnText.textContent === 'Check Out';
+
+    // Validasi
+    if (!namaInput.value.trim()) {
+        showAlert('Validasi', 'Mohon isi nama lengkap Anda', 'error');
+        namaInput.focus();
+        isSubmitting = false;
+        return;
+    }
+
+    if (!hadirUntukInput.value.trim()) {
+        showAlert('Validasi', 'Field hadir untuk tidak boleh kosong', 'error');
+        hadirUntukInput.focus();
+        isSubmitting = false;
+        return;
+    }
+
+    if (isCheckOut && !earlyLeaveReason.value.trim()) {
+        showAlert('Validasi', 'Mohon isi alasan checkout', 'error');
+        earlyLeaveReason.focus();
+        isSubmitting = false;
+        return;
+    }
+
+    if (!canvas.classList.contains('hidden')) {
+        const originalBtnText = submitBtn.innerHTML;
+        submitBtn.innerHTML = `<i class="fas fa-spinner fa-spin mr-2"></i> ${isCheckOut ? 'MENYIMPAN CHECK OUT...' : 'MENYIMPAN CHECK IN...'}`;
+
+        try {
+            const formData = new FormData();
+            formData.append('nama', namaInput.value);
+            formData.append('lokasi', lokasiInput.value);
+            formData.append('hadir_untuk', hadirUntukInput.value);
+            formData.append('tanggal', tanggalInput.value);
+            formData.append('jam', jamInput.value);
+            formData.append('is_checkout', isCheckOut ? 1 : 0);
+
+            if (isCheckOut) {
+                formData.append('early_leave_reason', earlyLeaveReason.value);
+            }
+
+            const blob = await new Promise(resolve => canvas.toBlob(resolve, 'image/png'));
+            formData.append('foto', blob, 'presensi_' + Date.now() + '.png');
+
+            const response = await fetch('/attendance', {
+                method: 'POST',
+                headers: {
+                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content,
+                    'Accept': 'application/json'
+                },
+                body: formData
+            });
+
+            const result = await response.json();
+
+            if (result.success) {
+                showAlert('Sukses', result.message, 'success');
+                setTimeout(() => {
+                    window.location.reload();
+                }, 2000);
+            } else {
+                throw new Error(result.message || 'Terjadi kesalahan');
+            }
+        } catch (error) {
+            console.error('Error:', error);
+            showAlert('Error', error.message || 'Terjadi kesalahan saat menyimpan data', 'error');
+        } finally {
+            isSubmitting = false;
+            submitBtn.disabled = false;
+            submitBtn.innerHTML = originalBtnText;
+        }
+    } else {
+        showAlert('Validasi', 'Silakan ambil foto terlebih dahulu', 'warning');
     }
 });
 
@@ -295,12 +429,12 @@ form.addEventListener('submit', async function (e) {
             formData.append('foto', blob, 'presensi_' + Date.now() + '.png');
 
             const response = await fetch('/attendance', {
-                method: 'POST',
-                headers: {
-                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content,
-                    'Accept': 'application/json'
-                },
-                body: formData
+            method: 'POST',
+            headers: {
+                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content,
+                'Accept': 'application/json'
+            },
+            body: formData
             });
 
             const result = await response.json();
@@ -319,7 +453,7 @@ form.addEventListener('submit', async function (e) {
         } finally {
             isSubmitting = false;
             submitBtn.disabled = false;
-            submitBtn.innerHTML = originalBtnText;
+                submitBtn.innerHTML = originalBtnText;
         }
     } else {
         showAlert('Validasi', 'Silakan ambil foto terlebih dahulu', 'warning');
@@ -357,5 +491,3 @@ if (document.querySelector('.notification-count')) {
     updateNotificationCount();
     setInterval(updateNotificationCount, 30000);
 }
-
-

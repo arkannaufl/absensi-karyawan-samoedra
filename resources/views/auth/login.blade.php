@@ -32,7 +32,7 @@
 
             <h1 class="text-2xl font-semibold text-center mb-4 text-gray-800">Login Admin</h1>
 
-            <!-- Session Status -->
+    <!-- Session Status -->
             @if (session('status'))
             <div class="mb-6 p-4 bg-blue-100 border-l-4 border-blue-500 text-blue-700 rounded-lg">
                 {{ session('status') }}
@@ -40,7 +40,7 @@
             @endif
 
             <form method="POST" action="{{ route('login') }}" class="space-y-6" id="loginForm">
-                @csrf
+        @csrf
 
                 <!-- Email Field -->
                 <div class="space-y-2">
@@ -59,7 +59,7 @@
                         {{ $message }}
                     </p>
                     @enderror
-                </div>
+        </div>
 
                 <!-- Password Field -->
                 <div class="space-y-2">
@@ -83,9 +83,9 @@
                         {{ $message }}
                     </p>
                     @enderror
-                </div>
+        </div>
 
-                <!-- Remember Me -->
+        <!-- Remember Me -->
                 <div class="flex items-center">
                     <input type="checkbox" name="remember" id="remember"
                         class="rounded border-gray-300 text-purple-600 shadow-sm focus:border-purple-500 focus:ring-purple-500">
@@ -105,7 +105,7 @@
         <p class="mt-8 text-center text-sm text-gray-600">
             &copy; {{ date('Y') }} Samoedra. All rights reserved.
         </p>
-    </div>
+        </div>
 
     <style>
         /* Tambahkan animasi gradient background */

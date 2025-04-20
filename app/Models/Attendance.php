@@ -18,7 +18,8 @@ class Attendance extends Model
         'check_out',
         'early_leave_reason',
         'work_hours',
-        'attendance_percentage'
+        'attendance_percentage',
+        'auto_checkout'
     ];
     
     protected $casts = [

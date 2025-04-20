@@ -5,8 +5,7 @@
     <!-- Notification Messages -->
     <div id="notification-container" class="fixed top-4 right-4 z-50 space-y-2 w-80">
         @if(session('success'))
-        <div
-            class="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded-lg drop-shadow-lg flex items-start notification transition-all duration-300 transform translate-x-0">
+        <div class="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded-lg drop-shadow-lg flex items-start notification transition-all duration-300 transform translate-x-0">
             <div class="flex-shrink-0">
                 <i class="fas fa-check-circle text-green-500 mr-2 mt-1"></i>
             </div>
@@ -16,13 +15,26 @@
         </div>
         @endif
         @if(session('error'))
-        <div
-            class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded-lg drop-shadow-lg flex items-start notification transition-all duration-300 transform translate-x-0">
+        <div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded-lg drop-shadow-lg flex items-start notification transition-all duration-300 transform translate-x-0">
             <div class="flex-shrink-0">
                 <i class="fas fa-exclamation-circle text-red-500 mr-2 mt-1"></i>
             </div>
             <div>
                 <span>{{ session('error') }}</span>
+            </div>
+        </div>
+        @endif
+        @if($errors->any())
+        <div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded-lg drop-shadow-lg flex items-start notification transition-all duration-300 transform translate-x-0">
+            <div class="flex-shrink-0">
+                <i class="fas fa-exclamation-circle text-red-500 mr-2 mt-1"></i>
+            </div>
+            <div>
+                <ul>
+                    @foreach($errors->all() as $error)
+                        <li>{{ $error }}</li>
+                    @endforeach
+                </ul>
             </div>
         </div>
         @endif
@@ -73,6 +85,9 @@
                                     Baru</label>
                                 <input type="text" id="new_name" name="new_name" required minlength="3" maxlength="255"
                                     class="w-full px-4 py-2 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-purple-500">
+                                @error('new_name')
+                                    <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
+                                @enderror
                             </div>
                             <button type="submit"
                                 class="px-4 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition-colors duration-200">
@@ -102,12 +117,18 @@
                                     Baru</label>
                                 <input type="email" id="new_email" name="new_email" required
                                     class="w-full px-4 py-2 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-purple-500">
+                                @error('new_email')
+                                    <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
+                                @enderror
                             </div>
                             <div class="mb-6">
                                 <label for="new_email_confirmation"
                                     class="block text-sm font-medium text-gray-700 mb-2">Konfirmasi Email Baru</label>
                                 <input type="email" id="new_email_confirmation" name="new_email_confirmation" required
                                     class="w-full px-4 py-2 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-purple-500">
+                                @error('new_email_confirmation')
+                                    <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
+                                @enderror
                             </div>
                             <button type="submit"
                                 class="px-4 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition-colors duration-200">
@@ -130,6 +151,9 @@
                                     class="block text-sm font-medium text-gray-700 mb-2">Password Saat Ini</label>
                                 <input type="password" id="current_password" name="current_password" required
                                     class="w-full px-4 py-2 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-purple-500">
+                                @error('current_password')
+                                    <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
+                                @enderror
                             </div>
                             <div class="mb-6">
                                 <label for="new_password" class="block text-sm font-medium text-gray-700 mb-2">Password
@@ -138,6 +162,9 @@
                                     class="w-full px-4 py-2 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-purple-500">
                                 <p class="mt-1 text-xs text-gray-500">Password minimal 8 karakter dan mengandung huruf
                                     besar, kecil, angka, dan simbol.</p>
+                                @error('new_password')
+                                    <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
+                                @enderror
                             </div>
                             <div class="mb-6">
                                 <label for="new_password_confirmation"
@@ -146,6 +173,9 @@
                                 <input type="password" id="new_password_confirmation" name="new_password_confirmation"
                                     required
                                     class="w-full px-4 py-2 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-purple-500">
+                                @error('new_password_confirmation')
+                                    <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
+                                @enderror
                             </div>
                             <button type="submit"
                                 class="px-4 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition-colors duration-200">

@@ -46,7 +46,7 @@
     <div class="absolute bottom-0 w-full px-6 py-4 border-t border-gray-300/50 bg-white/80 backdrop-blur-sm">
         <div class="flex items-center">
             <div
-                class="h-10 w-10 rounded-full bg-gradient-to-r from-purple-400 to-indigo-400 flex items-center justify-center text-white font-semibold shadow-md ring-2 ring-purple-300/50 transition-all duration-300 hover:ring-purple-400 hover:shadow-lg">
+                class="h-10 w-10 aspect-square rounded-full bg-gradient-to-r from-purple-400 to-indigo-400 flex items-center justify-center text-white font-semibold shadow-md ring-2 ring-purple-300/50 transition-all duration-300 hover:ring-purple-400 hover:shadow-lg">
                 {{ substr(Auth::user()->name, 0, 1) }}
             </div>
             <div class="ml-3">

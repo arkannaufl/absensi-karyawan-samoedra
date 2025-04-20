@@ -78,6 +78,11 @@
                                         class="h-10 w-10 sm:h-12 sm:w-12 rounded-xl bg-red-50 flex items-center justify-center group-hover:scale-110 transition-transform">
                                         <i class="fas fa-sign-out-alt text-lg sm:text-xl text-red-500"></i>
                                     </div>
+                                    @elseif(str_contains(strtolower($notification->title), 'karyawan dihapus'))
+                                    <div
+                                        class="h-10 w-10 sm:h-12 sm:w-12 rounded-xl bg-yellow-50 flex items-center justify-center group-hover:scale-110 transition-transform">
+                                        <i class="fas fa-user-minus text-lg sm:text-xl text-yellow-500"></i>
+                                    </div>
                                     @else
                                     @switch($notification->type)
                                     @case('success')
@@ -114,11 +119,11 @@
                                         <div class="flex items-center space-x-2 sm:space-x-3">
                                             @if(!$notification->is_read)
                                             <span
-                                                class="inline-flex items-center px-2 sm:px-3 py-1 rounded-full text-xs font-medium bg-purple-100 text-purple-800">
+                                                class="inline-flex items-center px-2 sm:px-3 py-1 rounded-full text-sm font-medium bg-purple-100 text-purple-800">
                                                 Baru
                                             </span>
                                             @endif
-                                            <span class="text-xs text-gray-500 whitespace-nowrap">
+                                            <span class="text-sm text-gray-500 whitespace-nowrap">
                                                 {{ $notification->created_at->diffForHumans() }}
                                             </span>
                                         </div>
