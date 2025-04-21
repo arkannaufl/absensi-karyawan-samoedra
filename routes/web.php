@@ -36,6 +36,9 @@ Route::prefix('admin')->middleware(['auth'])->group(function () {
         
     Route::get('/attendances/search', [AdminController::class, 'searchAttendances'])
         ->name('admin.attendances.search');
+
+    // Export route
+    Route::get('/export', [AdminController::class, 'export'])->name('admin.export');
 });
 
 Route::get('/attendance', [AttendanceController::class, 'create'])->name('attendance.create');

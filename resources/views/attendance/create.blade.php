@@ -6,6 +6,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="csrf-token" content="{{ csrf_token() }}">
     @vite('resources/css/app.css')
+    <title>Absensi Digital | Rumah Samoedra</title>
+    <link rel="icon" href="{{ asset('assets/samoedra-fav-icon.png') }}" type="image/png">
     <title>Absensi Digital | Samoedra</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -193,8 +195,3 @@
         }
     </style>
 </body>
-</html>
-</body>
-</html>
-</body>
-</html>

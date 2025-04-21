@@ -360,6 +360,11 @@
                             <input type="date" id="attendanceDateFilter"
                                 class="pl-4 pr-4 py-2 w-full rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-purple-500 text-base">
                         </div>
+                        <!-- Export Button -->
+                        <a href="{{ route('admin.export') }}" id="exportBtn"
+                            class="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors duration-200 font-medium flex items-center justify-center">
+                            <i class="fas fa-file-excel mr-2"></i> Export Excel
+                        </a>
                     </div>
                 </div>
                 <div class="overflow-x-auto table-container">

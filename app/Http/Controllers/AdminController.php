@@ -7,6 +7,8 @@ use App\Models\Employee;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Log;
+use App\Exports\AttendanceExport;
+use Maatwebsite\Excel\Facades\Excel;
 
 class AdminController extends Controller
 {
@@ -342,5 +344,18 @@ class AdminController extends Controller
                 'message' => 'Gagal melakukan pencarian presensi: ' . $e->getMessage()
             ], 500);
         }
+    }
+
+    public function export(Request $request)
+    {
+        $startDate = $request->input('start_date');
+        $endDate = $request->input('end_date');
+        
+        $filename = 'attendance_export_' . date('Y-m-d_H-i-s') . '.xlsx';
+        
+        return Excel::download(
+            new AttendanceExport($startDate, $endDate),
+            $filename
+        );
     }
 }

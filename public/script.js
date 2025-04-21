@@ -491,3 +491,27 @@ if (document.querySelector('.notification-count')) {
     updateNotificationCount();
     setInterval(updateNotificationCount, 30000);
 }
+
+// Export functionality
+document.addEventListener('DOMContentLoaded', function() {
+    const exportBtn = document.getElementById('exportBtn');
+    const dateFilter = document.getElementById('attendanceDateFilter');
+
+    if (exportBtn && dateFilter) {
+        exportBtn.addEventListener('click', function(e) {
+            e.preventDefault();
+            
+            // Get the selected date
+            const selectedDate = dateFilter.value;
+            
+            // Build the export URL with date parameters
+            let exportUrl = exportBtn.getAttribute('href');
+            if (selectedDate) {
+                exportUrl += `?start_date=${selectedDate}&end_date=${selectedDate}`;
+            }
+            
+            // Navigate to the export URL
+            window.location.href = exportUrl;
+        });
+    }
+});

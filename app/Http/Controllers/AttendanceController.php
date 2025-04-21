@@ -228,7 +228,7 @@ class AttendanceController extends Controller
     
                 // Dispatch auto checkout job
                 Log::info("Dispatching AutoCheckoutJob for attendance ID: {$attendance->id}");
-                AutoCheckoutJob::dispatch($attendance->id)->delay(now()->addMinutes(1))->onQueue('default');
+                AutoCheckoutJob::dispatch($attendance->id)->delay(now()->addMinutes(2))->onQueue('default');
                 Log::info("AutoCheckoutJob dispatched successfully");
             }
     
